@@ -28,10 +28,10 @@ security:
       anonymous: ~
       provider: in_memory
       form_login:
-        login_path: /api/login
-        check_path: /api/login_check
+        login_path: /login
+        check_path: /login_check
       logout:
-        path:   /api/logout
-        target: /api/basic
+        path:   /logout
+        target: /basic
   access_control:
-    - { path: ^/api/weather-root, roles: ROLE_ADMIN }
+    - { path: ^/weather-root, roles: ROLE_ADMIN }
