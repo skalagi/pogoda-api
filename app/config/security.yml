@@ -23,7 +23,7 @@ security:
       security: false
 
     secured_area:
-      pattern:    ^/api
+      pattern:    ^/
       http_basic: ~
       anonymous: ~
       provider: in_memory
