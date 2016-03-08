@@ -29,7 +29,6 @@ class Storage
         $this->data = json_decode(file_get_contents($this->file));
         if(!property_exists($this->data, 'emails')) $this->data->emails = new \stdClass;
         if(!property_exists($this->data, 'locked')) $this->data->locked = new \stdClass;
-        $this->save();
     }
 
     /**
@@ -71,6 +70,7 @@ class Storage
     public function lock($notifyName)
     {
         $this->data->locked->{$notifyName} = time();
+        $this->save();
         return true;
     }
 
@@ -94,6 +94,7 @@ class Storage
     {
         if(in_array($subscriber, $this->data->emails)) return false;
         $this->data->emails[] = $subscriber;
+        $this->save();
         return true;
     }
 
@@ -112,7 +113,7 @@ class Storage
                 $found = true;
             }
         }
-
+        $this->save();
         return $found;
     }
 
