@@ -36,7 +36,7 @@ final class IconCache
 //            $this->save($day->icon_url);
 //            $newUrl = $this->serverName.'/bundles/syntaxerrorapi/images/'.$this->getLastName($day->icon_url);
 
-            $forecast->forecast->txt_forecast->forecastday[$i]->icon_url = str_replace('http:', '', $day);
+            $forecast->forecast->txt_forecast->forecastday[$i]->icon_url = str_replace('http:', '', $day->icon_url);
         }
         return json_encode($forecast);
     }
