@@ -51,7 +51,7 @@ class Storage
     public function isLocked($notifyName)
     {
         if(!property_exists($this->data->locked, $notifyName)) return false;
-        if($this->data->locked->{$notifyName} <= time()+3600*24) {
+        if(time() <= $this->data->locked->{$notifyName}+3600*24) {
             $returned = true;
         } else {
             $returned = false;
