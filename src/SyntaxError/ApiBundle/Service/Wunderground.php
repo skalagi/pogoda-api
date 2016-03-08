@@ -4,7 +4,7 @@ namespace SyntaxError\ApiBundle\Service;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
-use SyntaxError\ApiBundle\Tools\IconCache;
+//use SyntaxError\ApiBundle\Tools\IconCache;
 
 /**
  * Class Wunderground
@@ -83,14 +83,14 @@ class Wunderground
             $wuRequests->{$dataName} = $dataStatus;
             $redis->set('wu_requests', json_encode($wuRequests));
 
-            if($dataName == 'forecast') {
-                $iconCache = new IconCache(
-                    __DIR__.DIRECTORY_SEPARATOR."..".DIRECTORY_SEPARATOR."Resources".DIRECTORY_SEPARATOR."public".DIRECTORY_SEPARATOR."images"
-                );
-                $fullServerName = $this->request->isSecure() ? "https://".$this->request->getHost() : $this->request->getHost();
-                $iconCache->setServerName($fullServerName);
-                $wuJson = $iconCache->cacheFromWunderground($wuJson);
-            }
+//            if($dataName == 'forecast') {
+//                $iconCache = new IconCache(
+//                    __DIR__.DIRECTORY_SEPARATOR."..".DIRECTORY_SEPARATOR."Resources".DIRECTORY_SEPARATOR."public".DIRECTORY_SEPARATOR."images"
+//                );
+//                $fullServerName = $this->request->isSecure() ? "https://".$this->request->getHost() : $this->request->getHost();
+//                $iconCache->setServerName($fullServerName);
+//                $wuJson = $iconCache->cacheFromWunderground($wuJson);
+//            }
             $redis->setEx($dataName, $lifeTimeInMinutes*60, $wuJson);
         }
         return $redis->get($dataName);
