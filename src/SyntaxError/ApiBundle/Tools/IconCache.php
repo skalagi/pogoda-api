@@ -33,40 +33,40 @@ final class IconCache
     {
         $forecast = json_decode($forecastJsonString);
         foreach($forecast->forecast->txt_forecast->forecastday as $i => $day) {
-            $this->save($day->icon_url);
-            $newUrl = $this->serverName.'/bundles/syntaxerrorapi/images/'.$this->getLastName($day->icon_url);
+//            $this->save($day->icon_url);
+//            $newUrl = $this->serverName.'/bundles/syntaxerrorapi/images/'.$this->getLastName($day->icon_url);
 
-            $forecast->forecast->txt_forecast->forecastday[$i]->icon_url = $newUrl;
+            $forecast->forecast->txt_forecast->forecastday[$i]->icon_url = str_replace('http:', '', $day);
         }
         return json_encode($forecast);
     }
+//
+//    /**
+//     * Save file on disk from url.
+//     *
+//     * @param $urlPath
+//     * @return int
+//     */
+//    private function save($urlPath)
+//    {
+//        return file_put_contents(
+//            $this->root.DIRECTORY_SEPARATOR.$this->getLastName($urlPath),
+//            file_get_contents($urlPath)
+//        );
+//    }
 
-    /**
-     * Save file on disk from url.
-     *
-     * @param $urlPath
-     * @return int
-     */
-    private function save($urlPath)
-    {
-        return file_put_contents(
-            $this->root.DIRECTORY_SEPARATOR.$this->getLastName($urlPath),
-            file_get_contents($urlPath)
-        );
-    }
-
-    /**
-     * Get only filename from file path.
-     *
-     * @param $path
-     * @return null
-     */
-    private function getLastName($path)
-    {
-        $exploded = explode("/", $path);
-        if(!$exploded) return null;
-        return $exploded[count($exploded)-1];
-    }
+//    /**
+//     * Get only filename from file path.
+//     *
+//     * @param $path
+//     * @return null
+//     */
+//    private function getLastName($path)
+//    {
+//        $exploded = explode("/", $path);
+//        if(!$exploded) return null;
+//        return $exploded[count($exploded)-1];
+//    }
 
     /**
      * @return string
