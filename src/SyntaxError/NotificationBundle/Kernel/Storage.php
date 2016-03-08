@@ -81,7 +81,7 @@ class Storage
      */
     public function getSubscribers()
     {
-        return $this->data['emails'];
+        return $this->data->emails;
     }
 
     /**
@@ -92,8 +92,8 @@ class Storage
      */
     public function addSubscriber($subscriber)
     {
-        if(in_array($subscriber, $this->data['emails'])) return false;
-        $this->data['emails'][] = $subscriber;
+        if(in_array($subscriber, $this->data->emails)) return false;
+        $this->data->emails[] = $subscriber;
         return true;
     }
 
@@ -106,9 +106,9 @@ class Storage
     public function removeSubscriber($subscriber)
     {
         $found = false;
-        foreach($this->data['emails'] as $i => $registeredSubscriber) {
+        foreach($this->data->emails as $i => $registeredSubscriber) {
             if($subscriber == $registeredSubscriber) {
-                unset($this->data['emails'][$i]);
+                unset($this->data->emails[$i]);
                 $found = true;
             }
         }
