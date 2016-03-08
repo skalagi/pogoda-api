@@ -16,9 +16,9 @@ class Notifier
     private $container;
 
     /**
-     * @var RedisStorage
+     * @var Storage
      */
-    private $redis;
+    private $storage;
 
     /**
      * @var \Twig_Environment
@@ -34,7 +34,7 @@ class Notifier
         $kernel->boot();
         $this->container = $kernel->getContainer();
 
-        $this->redis = new RedisStorage('127.0.0.1');
+        $this->storage = new Storage();
 
         $twigCachePath = __DIR__."/../../../../app/cache/notify";
         if(!file_exists($twigCachePath)) {
@@ -63,8 +63,8 @@ class Notifier
                );
 
                echo "[".(new \DateTime('now'))->format("Y-m-d H:i:s")."] | ";
-               if(!$this->redis->isLocked(get_class($object))) {
-                   echo $this->checkNotify($object) ? "Notify $class send to subscribers. [".count($this->redis->getSubscribers())."]" : "Notify $class not active now.";
+               if(!$this->storage->isLocked(get_class($object))) {
+                   echo $this->checkNotify($object) ? "Notify $class send to subscribers. [".count($this->storage->getSubscribers())."]" : "Notify $class not active now.";
                } else {
                    echo "Class $class is locked now.";
                }
@@ -86,7 +86,7 @@ class Notifier
         if(!$notify->isActive($this->container)) return false;
 
         $findQueues = false;
-        foreach($this->redis->getSubscribers() as $subscriber) {
+        foreach($this->storage->getSubscribers() as $subscriber) {
             $message = \Swift_Message::newInstance()
                 ->setFrom([$this->container->getParameter('mailer_user') => 'Stacja pogodowa Skałągi'])
                 ->setTo($subscriber)
@@ -102,7 +102,7 @@ class Notifier
             $transport = $this->container->get('swiftmailer.transport.real');
             $spool->flushQueue($transport);
         }
-        $this->redis->lock(get_class($notify));
+        $this->storage->lock(get_class($notify));
         return true;
     }
 }

@@ -5,7 +5,7 @@ namespace SyntaxError\ApiBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use SyntaxError\NotificationBundle\Kernel\RedisStorage;
+use SyntaxError\NotificationBundle\Kernel\Storage;
 
 class InfoController extends Controller
 {
@@ -31,7 +31,7 @@ class InfoController extends Controller
             return new JsonResponse(['status' => 'Require email in POST parameters.', 500]);
         }
         $email = $request->request->get('email');
-        $redisStorage = new RedisStorage('127.0.0.1');
+        $redisStorage = new Storage();
 
         if($redisStorage->hasSubscriber($email)) {
             return $redisStorage->removeSubscriber($request->request->get('email')) ? new JsonResponse(['status' => 'Removed.']) : new JsonResponse(['status' => 'Not found.'], 404);
