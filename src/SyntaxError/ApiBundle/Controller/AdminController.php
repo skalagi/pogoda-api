@@ -5,6 +5,7 @@ namespace SyntaxError\ApiBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use SyntaxError\ApiBundle\Tools\Jsoner;
+use SyntaxError\NotificationBundle\Kernel\Storage;
 use SyntaxError\SocketBundle\Server\Config;
 
 class AdminController extends Controller
@@ -24,6 +25,22 @@ class AdminController extends Controller
                     return $this->redirectToRoute( $request->attributes->get('_route') );
             }
         }
+
+        $sendForm = -1;
+        if($request->request->has('mailing')) {
+            $subscribers = new Storage();
+            $sendForm = 0;
+            foreach($subscribers->getSubscribers() as $subscriber) {
+                $welcomeEmail = \Swift_Message::newInstance()
+                    ->setFrom([$this->container->getParameter('mailer_user') => 'Stacja pogodowa Skałągi'])
+                    ->setTo($subscriber)
+                    ->setSubject($request->request->get('subject'))
+                    ->setBody($request->request->get('mailing'), 'text/html', 'utf-8')
+                    ->setDescription('Wiadomość wygenerowana przez stacje pogodową w Skałągach.');
+                $this->get('mailer')->send($welcomeEmail);
+                $sendForm++;
+            }
+        }
         $admin = $this->get('syntax_error_api.admin');
 
         if( $request->isXmlHttpRequest() ) {
@@ -36,7 +53,8 @@ class AdminController extends Controller
             'hardware' => $admin->createHardwareInformer(),
             'database' => $admin->createDatabaseInformer(),
             'server' => $admin->createServerInformer(),
-            'socket' => $admin->createSocketInformer()
+            'socket' => $admin->createSocketInformer(),
+            'sendForm' => $sendForm
         ]);
     }
 

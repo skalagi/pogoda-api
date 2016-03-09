@@ -83,7 +83,7 @@ class Admin
 
     public function createSocketInformer()
     {
-        $hostsObj = json_decode(file_get_contents(Config::hostsPath));
+        $hostsObj = is_readable(Config::hostsPath) ? json_decode(file_get_contents(Config::hostsPath)) : new \stdClass();
         $output = [];
         foreach(get_object_vars($hostsObj) as $client) {
             $output[] = $client;
