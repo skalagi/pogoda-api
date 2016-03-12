@@ -32,9 +32,11 @@ class InfoController extends Controller
         }
 
         $storage = new Storage();
-        return new JsonResponse($storage->hasSubscriber(
+        $response = new JsonResponse($storage->hasSubscriber(
             $request->request->get('email')
         ));
+        $response->headers->set('Access-Control-Allow-Origin', '*');
+        return $response;
     }
 
     public function subscribeAction(Request $request)
@@ -53,7 +55,9 @@ class InfoController extends Controller
                 ->setBody($this->renderView("SyntaxErrorApiBundle:Info:removeMail.html.twig", ['email' => $email]), 'text/html', 'utf-8')
                 ->setDescription('Wiadomość wygenerowana przez stacje pogodową w Skałągach.');
             $this->get('mailer')->send($byeEmail);
-            return $redisStorage->removeSubscriber($request->request->get('email')) ? new JsonResponse(['status' => 'Removed.']) : new JsonResponse(['status' => 'Not found.'], 404);
+            $response = $redisStorage->removeSubscriber($request->request->get('email')) ? new JsonResponse(['status' => 'Removed.']) : new JsonResponse(['status' => 'Not found.'], 404);
+            $response->headers->set('Access-Control-Allow-Origin', '*');
+            return $response;
         }
 
         $welcomeEmail = \Swift_Message::newInstance()
@@ -64,6 +68,8 @@ class InfoController extends Controller
             ->setDescription('Wiadomość wygenerowana przez stacje pogodową w Skałągach.');
         $this->get('mailer')->send($welcomeEmail);
 
-        return $redisStorage->addSubscriber($request->request->get('email')) ? new JsonResponse(['status' => 'Added.']) : new JsonResponse(['status' => 'Internal server error.'], 500);
+        $response = $redisStorage->addSubscriber($request->request->get('email')) ? new JsonResponse(['status' => 'Added.']) : new JsonResponse(['status' => 'Internal server error.'], 500);
+        $response->headers->set('Access-Control-Allow-Origin', '*');
+        return $response;
     }
 }
