@@ -27,8 +27,8 @@ class AdminController extends Controller
         }
 
         $sendForm = -1;
+        $subscribers = new Storage();
         if($request->request->has('mailing')) {
-            $subscribers = new Storage();
             $sendForm = 0;
             foreach($subscribers->getSubscribers() as $subscriber) {
                 $welcomeEmail = \Swift_Message::newInstance()
@@ -54,7 +54,8 @@ class AdminController extends Controller
             'database' => $admin->createDatabaseInformer(),
             'server' => $admin->createServerInformer(),
             'socket' => $admin->createSocketInformer(),
-            'sendForm' => $sendForm
+            'sendForm' => $sendForm,
+            'subscribers' => $subscribers->getSubscribers()
         ]);
     }
 
