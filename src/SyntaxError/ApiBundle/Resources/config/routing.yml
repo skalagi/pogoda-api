@@ -44,6 +44,10 @@ syntax_error_api_archive_charts:
     type: outTemp|outHumidity|barometer|windGust|windGustDir|rain|rainRate
 
 # Notifications subscriber
+syntax_error_api_exists:
+   path: /subscriber-exists
+   defaults: { _controller: SyntaxErrorApiBundle:Info:subscriber }
+
 syntax_error_api_sub:
    path: /subscribe
    defaults: { _controller: SyntaxErrorApiBundle:Info:subscribe }

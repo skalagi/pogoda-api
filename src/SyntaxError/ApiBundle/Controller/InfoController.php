@@ -25,6 +25,18 @@ class InfoController extends Controller
         return $this->render("SyntaxErrorApiBundle:Info:socket.html.twig");
     }
 
+    public function subscriberAction(Request $request)
+    {
+        if(!$request->request->has('email')) {
+            return new JsonResponse(['status' => 'Require email in POST parameters.', 500]);
+        }
+
+        $storage = new Storage();
+        return new JsonResponse($storage->hasSubscriber(
+            $request->request->get('email')
+        ));
+    }
+
     public function subscribeAction(Request $request)
     {
         if(!$request->request->has('email')) {
