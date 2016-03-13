@@ -45,8 +45,11 @@ class InfoController extends Controller
             return new JsonResponse(['status' => 'Require email in POST parameters.', 500]);
         }
         $email = $request->request->get('email');
-        $redisStorage = new Storage();
+        if(!strlen($email)) {
+            return new JsonResponse(['status' => 'Require email in POST parameters.', 500]);
+        }
 
+        $redisStorage = new Storage();
         if($redisStorage->hasSubscriber($email)) {
             $byeEmail = \Swift_Message::newInstance()
                 ->setFrom([$this->container->getParameter('mailer_user') => 'Stacja pogodowa Skałągi'])
