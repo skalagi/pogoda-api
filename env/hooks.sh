@@ -10,10 +10,6 @@ GITPULL=$(cd $DIR/.. && git pull 2>&1)
 echo $GITPULL >> $STAT
 echo "</h4>" >> $STAT
 
-echo "<h4>Front: " >> $STAT
-$DIR/front.sh 2>&1 >> $STAT
-echo "</h4>" >> $STAT
-
 echo "<h4>Cache: " >> $STAT
 php $DIR/../app/console cache:clear --env=prod >> $STAT
 echo "</h4>" >> $STAT
