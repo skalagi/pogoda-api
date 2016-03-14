@@ -113,6 +113,7 @@ class Storage
                 $found = true;
             }
         }
+        $this->data->emails = array_values($this->data->emails);
         $this->save();
         return $found;
     }
