@@ -41,6 +41,26 @@ class InfoController extends Controller
 
     public function subscribeAction(Request $request)
     {
+        if(!$request->request->has('g-recaptcha-response')) {
+            return new JsonResponse(['status' => 'Denied.', 403]);
+        }
+        $opts = [
+            'http' => [
+                'method' => $_SERVER['REQUEST_METHOD'],
+                'content' => http_build_query([
+                    'secret' => $this->getParameter('google'),
+                    'response' => $request->request->get('g-recaptcha-response')
+                ]),
+            ]
+        ];
+        $opts['http']['header'] .= "Content-type: application/x-www-form-urlencoded\r\n";
+
+        $context = stream_context_create($opts);
+        $verified = json_decode(file_get_contents("https://www.google.com/recaptcha/api/siteverify", false, $context));
+        if(!property_exists($verified, 'success') || !$verified->success) {
+            return new JsonResponse(['status' => 'Denied.', 403]);
+        }
+
         if(!$request->request->has('email')) {
             return new JsonResponse(['status' => 'Require email in POST parameters.', 500]);
         }
