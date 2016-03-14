@@ -46,7 +46,7 @@ class InfoController extends Controller
         }
         $opts = [
             'http' => [
-                'method' => $_SERVER['REQUEST_METHOD'],
+                'method' => 'POST',
                 'content' => http_build_query([
                     'secret' => $this->getParameter('google'),
                     'response' => $request->request->get('g-recaptcha-response')
