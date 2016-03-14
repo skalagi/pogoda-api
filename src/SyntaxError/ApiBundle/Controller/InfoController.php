@@ -28,7 +28,7 @@ class InfoController extends Controller
     public function subscriberAction(Request $request)
     {
         if(!$request->request->has('email')) {
-            return new JsonResponse(['status' => 'Require email in POST parameters.', 500]);
+            return new JsonResponse(['status' => 'Require email in POST parameters.'], 500);
         }
 
         $storage = new Storage();
@@ -42,7 +42,7 @@ class InfoController extends Controller
     public function subscribeAction(Request $request)
     {
         if(!$request->request->has('g-recaptcha-response')) {
-            $response = new JsonResponse(['status' => 'Denied.', 403]);
+            $response = new JsonResponse(['status' => 'Denied.'], 403);
             $response->headers->set('Access-Control-Allow-Origin', '*');
             return $response;
         }
@@ -66,13 +66,13 @@ class InfoController extends Controller
         }
 
         if(!$request->request->has('email')) {
-            $response = new JsonResponse(['status' => 'Require email in POST parameters.', 500]);
+            $response = new JsonResponse(['status' => 'Require email in POST parameters.'], 500);
             $response->headers->set('Access-Control-Allow-Origin', '*');
             return $response;
         }
         $email = $request->request->get('email');
         if(!strlen($email)) {
-            $response = new JsonResponse(['status' => 'Require email in POST parameters.', 500]);
+            $response = new JsonResponse(['status' => 'Require email in POST parameters.'], 500);
             $response->headers->set('Access-Control-Allow-Origin', '*');
             return $response;
         }
