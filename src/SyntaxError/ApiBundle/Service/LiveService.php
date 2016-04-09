@@ -189,4 +189,15 @@ class LiveService
         $temperature->setDewPoint($dewPoint);
         return $temperature->setTrend($trend);
     }
+
+    /**
+     * Return count of archive table.
+     *
+     * @return integer
+     */
+    public function createCount()
+    {
+        return $this->archiveRepository->createQueryBuilder('a')->select('count(a) AS cnt')
+            ->getQuery()->getSingleScalarResult();
+    }
 }
