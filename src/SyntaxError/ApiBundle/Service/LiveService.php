@@ -113,7 +113,7 @@ class LiveService
         $current = new Reading();
         $current->name = "Akutalne opady";
         $current->units = Uniter::rain."/h";
-        $current->value = $this->lastArchive->getRainRate();
+        $current->value = $this->lastArchive->getRain();
 
         $sum = new Reading();
         $sum->name = "Suma opadów";
