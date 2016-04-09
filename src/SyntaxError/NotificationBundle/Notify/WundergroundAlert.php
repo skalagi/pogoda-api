@@ -30,6 +30,9 @@ class WundergroundAlert implements NotifyInterface
 
     public function getContent(\Twig_Environment $twig)
     {
+        foreach($this->alerts as $alert) {
+            $alert->description = preg_replace('/.*polski:/','', $alert->description);
+        }
         return $twig->render("Wunderground/alert.html.twig", [
             'name' => $this->name,
             'alert' => $this->alerts[0]
