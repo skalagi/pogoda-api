@@ -91,7 +91,7 @@ class Notifier
                 ->setFrom([$this->container->getParameter('mailer_user') => 'Stacja pogodowa Skałągi'])
                 ->setTo($subscriber)
                 ->setSubject($notify->getName())
-                ->setBody($notify->getContent($this->twig), 'text/html', 'utf-8')
+                ->setBody($notify->getContent($this->twig, ['sub' => $subscriber]), 'text/html', 'utf-8')
                 ->setDescription('Wiadomość wygenerowana przez stacje pogodową w Skałągach.');
             /** @noinspection PhpParamsInspection */
             $this->container->get('mailer')->send($message);

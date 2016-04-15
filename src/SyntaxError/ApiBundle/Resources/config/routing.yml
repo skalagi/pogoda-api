@@ -53,6 +53,10 @@ syntax_error_api_sub:
    defaults: { _controller: SyntaxErrorApiBundle:Info:subscribe }
    methods: [POST]
 
+syntax_error_api_unsub:
+   path: /unsubscribe/{email}
+   defaults: { _controller: SyntaxErrorApiBundle:Info:unSubscribe }
+
 # Redirect
 syntax_error_api_home:
   path: /

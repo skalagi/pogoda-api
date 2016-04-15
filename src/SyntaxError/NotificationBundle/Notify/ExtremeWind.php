@@ -62,12 +62,12 @@ class ExtremeWind implements NotifyInterface
         return "[ALERT] Zanotowano ekstremalnie silne porywy wiatru.";
     }
 
-    public function getContent(\Twig_Environment $twig)
+    public function getContent(\Twig_Environment $twig, array $additional = [])
     {
-        return $twig->render('Extreme/wind.html.twig', [
+        return $twig->render('Extreme/wind.html.twig', array_merge([
             'period' => $this->period,
             'record' => $this->record['speed'],
             'translatedDir' => Uniter::windDirPl($this->record['dir'])
-        ]);
+        ], $additional));
     }
 }

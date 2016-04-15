@@ -28,15 +28,15 @@ class WundergroundAlert implements NotifyInterface
         return "[ALERT] $name";
     }
 
-    public function getContent(\Twig_Environment $twig)
+    public function getContent(\Twig_Environment $twig, array $additional = [])
     {
         foreach($this->alerts as $alert) {
             $alert->description = preg_replace('/.*polski:/','', $alert->description);
         }
-        return $twig->render("Wunderground/alert.html.twig", [
+        return $twig->render("Wunderground/alert.html.twig", array_merge([
             'name' => $this->name,
             'alert' => $this->alerts[0]
-        ]);
+        ], $additional));
     }
 
 }

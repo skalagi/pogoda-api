@@ -39,6 +39,20 @@ class InfoController extends Controller
         return $response;
     }
 
+    public function unSubscribeAction($email)
+    {
+        $redisStorage = new Storage();
+        $byeEmail = \Swift_Message::newInstance()
+            ->setFrom([$this->container->getParameter('mailer_user') => 'Stacja pogodowa Skałągi'])
+            ->setTo($email)
+            ->setSubject('Anulowałeś subskrybcje powiadomień pogodowych.')
+            ->setBody($this->renderView("SyntaxErrorApiBundle:Info:removeMail.html.twig", ['email' => $email]), 'text/html', 'utf-8')
+            ->setDescription('Wiadomość wygenerowana przez stacje pogodową w Skałągach.');
+        $this->get('mailer')->send($byeEmail);
+        $redisStorage->removeSubscriber($email);
+        return $this->redirect("http://pogoda.skalagi.pl");
+    }
+
     public function subscribeAction(Request $request)
     {
         if(!$request->request->has('g-recaptcha-response')) {

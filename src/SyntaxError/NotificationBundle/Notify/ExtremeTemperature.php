@@ -79,12 +79,12 @@ class ExtremeTemperature implements NotifyInterface
         return "[ALERT] Zanotowana ekstremalnie ".$this->type." temperatura.";
     }
 
-    public function getContent(\Twig_Environment $twig)
+    public function getContent(\Twig_Environment $twig, array $additional = [])
     {
-        return $twig->render('Extreme/temperature.html.twig', [
+        return $twig->render('Extreme/temperature.html.twig', array_merge([
             'type' => $this->type,
             'period' => $this->period,
             'record' => $this->record
-        ]);
+        ], $additional));
     }
 }
