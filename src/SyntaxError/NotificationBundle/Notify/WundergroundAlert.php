@@ -21,8 +21,7 @@ class WundergroundAlert implements NotifyInterface
     public function getName()
     {
         $name = $this->alerts[0]->wtype_meteoalarm_name;
-        if(strlen($name) < 1 || strlen($name) > 20) $name = $this->alerts[0]->description;
-        if(strlen($name) < 1 || strlen($name) > 20) $name = $this->alerts[0]->message;
+        if(strlen($name) < 1 || strlen($name) > 20) $name = "Oficjalne ostrzeżenie pogodowe dla woj. opolskiego.";
 
         $this->name = $name;
         return "[ALERT] $name";
