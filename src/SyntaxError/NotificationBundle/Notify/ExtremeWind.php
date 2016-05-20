@@ -5,13 +5,11 @@ namespace SyntaxError\NotificationBundle\Notify;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use SyntaxError\ApiBundle\Entity\ArchiveDayWindgust;
 use SyntaxError\ApiBundle\Tools\Uniter;
+use SyntaxError\NotificationBundle\Date;
 use SyntaxError\NotificationBundle\Kernel\NotifyInterface;
-use SyntaxError\NotificationBundle\Tools\DateTimer;
 
 class ExtremeWind implements NotifyInterface
 {
-    use DateTimer;
-
     private $period;
 
     private $record = [];
@@ -19,20 +17,22 @@ class ExtremeWind implements NotifyInterface
     public function isActive(ContainerInterface $container)
     {
         $em = $container->get('doctrine.orm.default_entity_manager');
-        $todayRecordSpeed = $em->getRepository("SyntaxErrorApiBundle:ArchiveDayWindgust")->findOneByDay($this->todayMidnight());
+        $todayRecordSpeed = $em->getRepository("SyntaxErrorApiBundle:ArchiveDayWindgust")->findOneByDay(new \DateTime);
 
         $dayOfMonth = (new \DateTime('now'))->format("d");
         if($dayOfMonth < 7) return false;
 
+        $date = new Date();
+
         $monthMax = $em->getRepository("SyntaxErrorApiBundle:ArchiveDayWindgust")->createQueryBuilder('a')
             ->where('a.datetime >= :from')->andWhere('a.datetime <= :to')->andWhere('a.datetime != :this')
-            ->setParameter('from', $this->monthStart()->getTimestamp())->setParameter('to', $this->monthEnd()->getTimestamp())
+            ->setParameter('from', $date->getMonthStart()->getTimestamp())->setParameter('to', $date->getMonthEnd()->getTimestamp())
             ->setParameter('this', $todayRecordSpeed->getDatetime())->orderBy('a.max', 'desc')->setMaxResults(1)
             ->getQuery()->getOneOrNullResult();
 
         $yearMax = $em->getRepository("SyntaxErrorApiBundle:ArchiveDayWindgust")->createQueryBuilder('a')
             ->where('a.datetime >= :from')->andWhere('a.datetime <= :to')->andWhere('a.datetime != :this')
-            ->setParameter('from', $this->yearStart()->getTimestamp())->setParameter('to', $this->yearEnd()->getTimestamp())
+            ->setParameter('from', $date->getYearStart()->getTimestamp())->setParameter('to', $date->getYearEnd()->getTimestamp())
             ->setParameter('this', $todayRecordSpeed->getDatetime())->orderBy('a.max', 'desc')->setMaxResults(1)
             ->getQuery()->getOneOrNullResult();
 

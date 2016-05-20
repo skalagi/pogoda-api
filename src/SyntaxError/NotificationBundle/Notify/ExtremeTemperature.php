@@ -4,13 +4,11 @@ namespace SyntaxError\NotificationBundle\Notify;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use SyntaxError\ApiBundle\Entity\ArchiveDayOuttemp;
+use SyntaxError\NotificationBundle\Date;
 use SyntaxError\NotificationBundle\Kernel\NotifyInterface;
-use SyntaxError\NotificationBundle\Tools\DateTimer;
 
 class ExtremeTemperature implements NotifyInterface
 {
-    use DateTimer;
-
     private $type;
 
     private $period;
@@ -20,28 +18,30 @@ class ExtremeTemperature implements NotifyInterface
     public function isActive(ContainerInterface $container)
     {
         $em = $container->get('doctrine.orm.default_entity_manager');
-        $todayRecord = $em->getRepository("SyntaxErrorApiBundle:ArchiveDayOuttemp")->findOneByDay($this->todayMidnight());
+        $todayRecord = $em->getRepository("SyntaxErrorApiBundle:ArchiveDayOuttemp")->findOneByDay(new \DateTime);
         $dayOfMonth = (new \DateTime('now'))->format("d");
         if($dayOfMonth < 7) return false;
 
+        $date = new Date();
+
         $monthMax = $em->getRepository("SyntaxErrorApiBundle:ArchiveDayOuttemp")->createQueryBuilder('a')
             ->where('a.datetime >= :from')->andWhere('a.datetime <= :to')->andWhere('a.datetime != :this')
-            ->setParameter('from', $this->monthStart()->getTimestamp())->setParameter('to', $this->monthEnd()->getTimestamp())
+            ->setParameter('from', $date->getMonthStart()->getTimestamp())->setParameter('to', $date->getMonthEnd()->getTimestamp())
             ->setParameter('this', $todayRecord->getDatetime())->orderBy('a.max', 'desc')->setMaxResults(1)
             ->getQuery()->getOneOrNullResult();
         $monthMin = $em->getRepository("SyntaxErrorApiBundle:ArchiveDayOuttemp")->createQueryBuilder('a')
             ->where('a.datetime >= :from')->andWhere('a.datetime <= :to')->andWhere('a.datetime != :this')
-            ->setParameter('from', $this->monthStart()->getTimestamp())->setParameter('to', $this->monthEnd()->getTimestamp())
+            ->setParameter('from', $date->getMonthStart()->getTimestamp())->setParameter('to', $date->getMonthEnd()->getTimestamp())
             ->setParameter('this', $todayRecord->getDatetime())->orderBy('a.min', 'asc')->setMaxResults(1)
             ->getQuery()->getOneOrNullResult();
         $yearMax = $em->getRepository("SyntaxErrorApiBundle:ArchiveDayOuttemp")->createQueryBuilder('a')
             ->where('a.datetime >= :from')->andWhere('a.datetime <= :to')->andWhere('a.datetime != :this')
-            ->setParameter('from', $this->yearStart()->getTimestamp())->setParameter('to', $this->yearEnd()->getTimestamp())
+            ->setParameter('from', $date->getYearStart()->getTimestamp())->setParameter('to', $date->getYearEnd()->getTimestamp())
             ->setParameter('this', $todayRecord->getDatetime())->orderBy('a.max', 'desc')->setMaxResults(1)
             ->getQuery()->getOneOrNullResult();
         $yearMin = $em->getRepository("SyntaxErrorApiBundle:ArchiveDayOuttemp")->createQueryBuilder('a')
             ->where('a.datetime >= :from')->andWhere('a.datetime <= :to')->andWhere('a.datetime != :this')
-            ->setParameter('from', $this->yearStart()->getTimestamp())->setParameter('to', $this->yearEnd()->getTimestamp())
+            ->setParameter('from', $date->getYearStart()->getTimestamp())->setParameter('to', $date->getYearEnd()->getTimestamp())
             ->setParameter('this', $todayRecord->getDatetime())->orderBy('a.min', 'asc')->setMaxResults(1)
             ->getQuery()->getOneOrNullResult();
 
