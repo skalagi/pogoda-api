@@ -48,12 +48,21 @@ class Uniter
     /**
      * Convert speed in km/h to knots.
      *
-     * @param $kmph
+     * @param float|int $kmph
      * @return float
      */
     public static function kmph2knots($kmph)
     {
         return $kmph * 0.539956803;
+    }
+
+    /**
+     * @param float|int $inch
+     * @return float
+     */
+    public static function inchToMm($inch)
+    {
+        return $inch*25.4;
     }
 
     /**

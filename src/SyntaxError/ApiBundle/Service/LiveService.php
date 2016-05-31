@@ -54,7 +54,7 @@ class LiveService
         $next = new Reading();
         $next->name = "Następna aktualizacja";
         $next->units = "s";
-        $next->value = ($last + $this->lastArchive->getinterval()*60) - $now + 40;
+        $next->value = ($last + $this->lastArchive->getinterval()*60) - $now + 45;
         if($next->value < 0) {
             $next->value = "Offline";
         }

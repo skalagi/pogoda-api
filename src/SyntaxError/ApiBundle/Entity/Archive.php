@@ -3,6 +3,7 @@
 namespace SyntaxError\ApiBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use SyntaxError\ApiBundle\Tools\Uniter;
 
 /**
  * archive
@@ -738,7 +739,7 @@ class Archive
      */
     public function getRainRate()
     {
-        return $this->rainRate*25.4;
+        return Uniter::inchToMm($this->rainRate);
     }
 
     /**
@@ -761,7 +762,7 @@ class Archive
      */
     public function getRain()
     {
-        return $this->rain*25.4;
+        return Uniter::inchToMm($this->rain);
     }
 
     /**

@@ -4,6 +4,7 @@ namespace SyntaxError\ApiBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use SyntaxError\ApiBundle\Interfaces\ArchiveDay;
+use SyntaxError\ApiBundle\Tools\Uniter;
 
 /**
  * ArchiveDayRainrate
@@ -102,7 +103,7 @@ class ArchiveDayRainrate implements ArchiveDay
      */
     public function getMin()
     {
-        return $this->min*25.4;
+        return Uniter::inchToMm($this->min);
     }
 
     /**
@@ -140,7 +141,7 @@ class ArchiveDayRainrate implements ArchiveDay
      */
     public function getMax()
     {
-        return $this->max*25.4;
+        return Uniter::inchToMm($this->max);
     }
 
     /**
@@ -178,7 +179,7 @@ class ArchiveDayRainrate implements ArchiveDay
      */
     public function getSum()
     {
-        return $this->sum*25.4;
+        return Uniter::inchToMm($this->sum);
     }
 
     /**
@@ -216,7 +217,7 @@ class ArchiveDayRainrate implements ArchiveDay
      */
     public function getWsum()
     {
-        return $this->wsum*25.4;
+        return $this->wsum;
     }
 
     /**
