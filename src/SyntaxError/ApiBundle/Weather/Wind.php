@@ -30,7 +30,7 @@ class Wind
         if(!$currentSpeed->value) $currentDir->value = null;
         $this->current['speed'] = $currentSpeed;
         $this->current['dir'] = $currentDir;
-        $this->current['translated'] = $currentDir->value ? Uniter::windDirPl($currentDir->value) : null;
+        $this->current['translated'] = $currentDir->value !== null ? Uniter::windDirPl($currentDir->value) : null;
     }
 
     /**
@@ -43,7 +43,7 @@ class Wind
         if(!$gustSpeed->value) $gustDir->value = null;
         $this->gust['speed'] = $gustSpeed;
         $this->gust['dir'] = $gustDir;
-        $this->gust['translated'] = $gustDir->value ? Uniter::windDirPl($gustDir->value) : null;
+        $this->gust['translated'] = $gustDir->value !== null ? Uniter::windDirPl($gustDir->value) : null;
         return $this;
     }
 }
