@@ -24,7 +24,7 @@ class Storage
      */
     public function __construct()
     {
-        $this->file = __DIR__."/../../../../app/cache/subscribers.json";
+        $this->file = __DIR__."/../../../../var/cache/subscribers.json";
         if(!file_exists($this->file)) file_put_contents($this->file, '{}');
         $this->data = json_decode(file_get_contents($this->file));
         if(!property_exists($this->data, 'emails')) $this->data->emails = [];

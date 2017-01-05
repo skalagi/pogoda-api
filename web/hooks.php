@@ -1,25 +1,37 @@
 <?php
-if( $_SERVER['REQUEST_METHOD'] != 'POST' ) {
-    header("Location: /hooks_stat.html"); exit;
+
+require __DIR__.'/../vendor/autoload.php';
+require __DIR__.'/../app/AppKernel.php';
+
+if($_SERVER['REQUEST_METHOD'] != 'POST') {
+    header('Location: '.$_SERVER['HTTP_REFERER']); exit;
 }
 
-$payload = json_decode(file_get_contents('php://input'));
 $pathToProject = __DIR__."/..";
-$headContent = trim(str_replace("ref: ", "", file_get_contents($pathToProject."/.git/HEAD")));
+$output = '';
 
-if($payload->ref == $headContent) {
-    $redis = new \Redis();
-    $redis->connect('127.0.0.1');
+$kernel = new AppKernel('prod', false);
 
-    if( $redis->exists('deploy_running') && $redis->get('deploy_running') == 'true' ) {
-        header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
-        echo "Deploy is currently running.";
-    } else {
-        $redis->set('deploy_running', 'true');
-        echo `$pathToProject/env/hooks.sh > /dev/null 2>/dev/null &`.PHP_EOL;
-        echo "Deploy running. Check status on ".$_SERVER['HTTP_HOST']."/hooks_stat.html";
-    }
+$gitPull = new \Symfony\Component\Process\Process("cd $pathToProject && git pull");
+$gitPull->run();
+$pullOutput = $gitPull->isSuccessful() ? $gitPull->getOutput() : $gitPull->getErrorOutput();
+$output .= 'Git pull: '.$pullOutput.PHP_EOL;
 
-} else {
-    echo "I'm $headContent.";
+$cacheClear = new \Symfony\Component\Process\Process("cd $pathToProject && php bin/console cache:clear --env=prod");
+$cacheClear->run();
+$clearOutput = $cacheClear->isSuccessful() ? $cacheClear->getOutput() : $cacheClear->getErrorOutput();
+$output .= 'Cache clear: '.$clearOutput.PHP_EOL;
+
+$message = Swift_Message::newInstance('Deployment of weather API complete!')
+    ->setFrom($kernel->getContainer()->getParameter('mailer_user'))
+    ->setTo($kernel->getContainer()->getParameter('mailer_user'))
+    ->setBody(nl2br($output), 'text/html');
+
+$mailer = $kernel->getContainer()->get('mailer');
+/** @noinspection PhpParamsInspection */
+$mailer->send($message);
+if(method_exists($mailer->getTransport(), 'getSpool')) {
+    $spool = $mailer->getTransport()->getSpool();
+    $transport = $kernel->getContainer()->get('swiftmailer.transport.real');
+    if(method_exists($spool, 'flushQueue')) $spool->flushQueue($transport);
 }

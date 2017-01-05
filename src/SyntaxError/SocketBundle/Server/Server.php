@@ -44,6 +44,7 @@ class Server implements MessageComponentInterface
     {
         $this->clients->attach($conn);
         $ip = isset($conn->remoteAddress) ? $conn->remoteAddress : "Unknown";
+        /** @noinspection PhpUndefinedFieldInspection */
         $realIp = $conn->WebSocket->request->getHeader('X-Real-IP');
         if($ip == '127.0.0.1' && $realIp != '127.0.0.1') $ip = $realIp;
         $id = isset($conn->resourceId) ? $conn->resourceId : 0;
@@ -60,6 +61,7 @@ class Server implements MessageComponentInterface
     public function onMessage(ConnectionInterface $conn, $msg)
     {
         $ip = isset($conn->remoteAddress) ? $conn->remoteAddress : "Unknown";
+        /** @noinspection PhpUndefinedFieldInspection */
         $realIp = $conn->WebSocket->request->getHeader('X-Real-IP');
         if($ip == '127.0.0.1' && $realIp != '127.0.0.1') $ip = $realIp;
         $id = isset($conn->resourceId) ? $conn->resourceId : 0;
@@ -73,6 +75,7 @@ class Server implements MessageComponentInterface
     public function onClose(ConnectionInterface $conn)
     {
         $ip = isset($conn->remoteAddress) ? $conn->remoteAddress : "Unknown";
+        /** @noinspection PhpUndefinedFieldInspection */
         $realIp = $conn->WebSocket->request->getHeader('X-Real-IP');
         if($ip == '127.0.0.1' && $realIp != '127.0.0.1') $ip = $realIp;
         $id = isset($conn->resourceId) ? $conn->resourceId : 0;
@@ -89,6 +92,7 @@ class Server implements MessageComponentInterface
     public function onError(ConnectionInterface $conn, \Exception $e)
     {
         $ip = isset($conn->remoteAddress) ? $conn->remoteAddress : "Unknown";
+        /** @noinspection PhpUndefinedFieldInspection */
         $realIp = $conn->WebSocket->request->getHeader('X-Real-IP');
         if($ip == '127.0.0.1' && $realIp != '127.0.0.1') $ip = $realIp;
         $this->info->addCriticalError($ip, $e);

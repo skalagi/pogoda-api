@@ -13,8 +13,6 @@ class Provider
         $kernel = new \AppKernel('prod', false);
         $kernel->boot();
         $this->live = $kernel->getContainer()->get('syntax_error_api.live');
-        $kernel->shutdown();
-        unset($kernel);
     }
 
     public function getBasic()

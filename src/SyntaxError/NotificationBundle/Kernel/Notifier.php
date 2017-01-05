@@ -36,7 +36,7 @@ class Notifier
 
         $this->storage = new Storage();
 
-        $twigCachePath = __DIR__."/../../../../app/cache/notify";
+        $twigCachePath = __DIR__."/../../../../var/cache/notify";
         if(!file_exists($twigCachePath)) {
             mkdir($twigCachePath, 0777);
         }
@@ -79,7 +79,6 @@ class Notifier
      *
      * @param NotifyInterface $notify
      * @return bool
-     * @throws \Mailgun\Messages\Exceptions\MissingRequiredMIMEParameters
      */
     private function checkNotify(NotifyInterface $notify)
     {

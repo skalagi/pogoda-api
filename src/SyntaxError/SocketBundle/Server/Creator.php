@@ -17,7 +17,7 @@ class Creator
     public function __construct()
     {
         $config = Config::create();
-        $this->informer = new Informer( $this->createAbsoluteLogPath($config['log']) );
+        $this->informer = new Informer($this->createAbsoluteLogPath($config['log']));
         $this->informer->addInfo( 'SERVER', 'Logged to '.$config['log']." file.");
 
         $loop = Factory::create();
@@ -33,7 +33,8 @@ class Creator
                     new $config['task']($loop, $this->informer, $config)
                 )
             ),
-            $this->createSocket($config['bind'], $config['port'], $loop), $loop
+            $this->createSocket($config['bind'], $config['port'], $loop),
+            $loop
         );
     }
 
@@ -54,7 +55,7 @@ class Creator
     {
         $info = 'Server started at '.$this->server->socket->getPort()." port.";
         $this->informer->addInfo('SERVER', $info);
-        if( !(Config::setPid()) ) {
+        if(!(Config::setPid())) {
             $this->informer->addAlert('SERVER_NOTICE', 'Cannot save pid file. Check permissions.');
         };
         $this->server->run();
