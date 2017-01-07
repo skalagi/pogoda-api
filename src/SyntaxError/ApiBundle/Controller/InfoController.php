@@ -48,9 +48,10 @@ class InfoController extends Controller
             ->setSubject('Anulowałeś subskrybcje powiadomień pogodowych.')
             ->setBody($this->renderView("SyntaxErrorApiBundle:Info:removeMail.html.twig", ['email' => $email]), 'text/html', 'utf-8')
             ->setDescription('Wiadomość wygenerowana przez stacje pogodową w Skałągach.');
+        /** @noinspection PhpParamsInspection */
         $this->get('mailer')->send($byeEmail);
         $redisStorage->removeSubscriber($email);
-        return $this->redirect("http://pogoda.skalagi.pl");
+        return $this->redirect('http://pogoda.ml');
     }
 
     public function subscribeAction(Request $request)
@@ -91,16 +92,17 @@ class InfoController extends Controller
             return $response;
         }
 
-        $redisStorage = new Storage();
-        if($redisStorage->hasSubscriber($email)) {
+        $subscribers = new Storage();
+        if($subscribers->hasSubscriber($email)) {
             $byeEmail = \Swift_Message::newInstance()
                 ->setFrom([$this->container->getParameter('mailer_user') => 'Stacja pogodowa Skałągi'])
                 ->setTo($email)
                 ->setSubject('Anulowałeś subskrybcje powiadomień pogodowych.')
                 ->setBody($this->renderView("SyntaxErrorApiBundle:Info:removeMail.html.twig", ['email' => $email]), 'text/html', 'utf-8')
                 ->setDescription('Wiadomość wygenerowana przez stacje pogodową w Skałągach.');
+            /** @noinspection PhpParamsInspection */
             $this->get('mailer')->send($byeEmail);
-            $response = $redisStorage->removeSubscriber($request->request->get('email')) ? new JsonResponse(['status' => 'Removed.']) : new JsonResponse(['status' => 'Not found.'], 404);
+            $response = $subscribers->removeSubscriber($request->request->get('email')) ? new JsonResponse(['status' => 'Removed.']) : new JsonResponse(['status' => 'Not found.'], 404);
             $response->headers->set('Access-Control-Allow-Origin', '*');
             return $response;
         }
@@ -111,9 +113,10 @@ class InfoController extends Controller
             ->setSubject('Witamy! Zapisałeś się na bezpłatne powiadomienia pogodowe.')
             ->setBody($this->renderView("SyntaxErrorApiBundle:Info:addMail.html.twig", ['email' => $email]), 'text/html', 'utf-8')
             ->setDescription('Wiadomość wygenerowana przez stacje pogodową w Skałągach.');
+        /** @noinspection PhpParamsInspection */
         $this->get('mailer')->send($welcomeEmail);
 
-        $response = $redisStorage->addSubscriber($request->request->get('email')) ? new JsonResponse(['status' => 'Added.']) : new JsonResponse(['status' => 'Internal server error.'], 500);
+        $response = $subscribers->addSubscriber($request->request->get('email')) ? new JsonResponse(['status' => 'Added.']) : new JsonResponse(['status' => 'Internal server error.'], 500);
         $response->headers->set('Access-Control-Allow-Origin', '*');
         return $response;
     }
