@@ -2,3 +2,4 @@ bind: 127.0.0.1
 port: '7799'
 log: /../../../../var/logs/socket.log
 task: SyntaxError\SocketBundle\Task\Weather
+source_client_password: '$2y$10$2nnD1qCUFZz7vJaXjyn48ubMk9rNB1RldBUmRc42L.H9QpP/uJhAC'

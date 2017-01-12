@@ -2,7 +2,6 @@
 
 namespace SyntaxError\SocketBundle\Task;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use SyntaxError\SocketBundle\Server\Informer;
 use SyntaxError\SocketBundle\Server\Server;
 use Ratchet\ConnectionInterface;
@@ -12,68 +11,38 @@ class Weather extends Server
 {
     private $provider;
 
-    private $timers;
-
-    private $events;
+    private $sourceClientPassword;
 
     public function __construct(LoopInterface $loop, Informer $informer, array $config)
     {
         parent::__construct($loop, $informer, $config);
         $this->provider = new Provider();
-        $this->events = new ArrayCollection();
-        $this->timers = new ArrayCollection();
+        $this->sourceClientPassword = isset($config['source_client_password']) ? $config['source_client_password'] : null;
+
     }
 
     public function onOpen(ConnectionInterface $conn)
     {
         $client = parent::onOpen($conn);
-        $this->events->set($client['id'], false);
-        $conn->send( $this->provider->getBasic() );
+        $conn->send($this->provider->getBasic());
         return $client;
     }
 
-    public function onMessage(ConnectionInterface $from, $msg)
+    public function onMessage(ConnectionInterface $conn, $msg)
     {
-        $client = parent::onMessage($from, $msg);
-        if (!is_numeric($msg)) {
-            $from->send('I need your current timestamp.');
-            $this->info->addAlert($client['ip'], "Empty timestamp from id ".$client['id'].".");
-            return $client;
+        $client = parent::onMessage($conn, $msg);
+        $parsed = json_decode($msg, JSON_OBJECT_AS_ARRAY);
+        if($this->sourceClientPassword && isset($parsed['_source_client_password']) && password_verify($parsed['_source_client_password'], $this->sourceClientPassword)) {
+            $basic = $this->provider->getBasic();
+            $sentCount = 0;
+            foreach($this->clients as $client) {
+                /** @noinspection PhpUndefinedFieldInspection */
+                if($client->resourceId != $conn->resourceId) {
+                    $client->send($basic); $sentCount++;
+                }
+            }
+            $conn->send(json_encode(['_status' => sprintf('Sent data to %s clients!', $sentCount)]));
         }
-
-        if($this->events->get( $client['id'] )) {
-            $from->send('You have registered event.');
-            $this->info->addAlert($client['ip'], "Client ".$client['id']." try double register.");
-            return $client;
-        }
-        $this->events->set($client['id'], true);
-
-        $time = $this->provider->calculateTime( (int)$msg );
-        $this->info->addInfo(
-            $client['ip'],
-            "Client ".$client['id']." registers event for ".$time['wait']." seconds."
-        );
-        $from->send(json_encode( ['registered' => $time] ));
-
-        /** @noinspection PhpParamsInspection */
-        $newTimer = $this->loop->addTimer($time['wait'], function () use ($from, $client) {
-            $from->send( $this->provider->getBasic() );
-            $this->info->addInfo($client['ip'], "Send data to client ".$client['id'].".");
-            $this->events->set($client['id'], false);
-        });
-        $this->timers->set($client['id'], $newTimer);
-
-        return $client;
-    }
-
-    public function onClose(ConnectionInterface $conn)
-    {
-        $client = parent::onClose($conn);
-        $this->events->remove( $client['id'] );
-        if( $this->timers->containsKey($client['id']) ) {
-            $this->loop->cancelTimer( $this->timers->get($client['id']) );
-        }
-        $this->timers->remove($client['id']);
         return $client;
     }
 }
