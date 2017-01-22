@@ -12,28 +12,11 @@
         <pre style="margin-top: 0">
             <code class="js">
                 var conn = new WebSocket('wss://{{ app.request.server.get('HTTP_HOST') ~ "/socket" }}');
-                conn.request = function() {
-                    var date = new Date();
-                    this.send( date.getTime()/1000 );
-                    // You must send current timestamp in seconds for better update time calculation.
-                };
 
                 conn.onmessage = function(e) {
                     try {
                         var response = JSON.parse(e.data);
-                        if(response.registered) {
-                            console.log(response.registered);
-                            // Response after this.request().
-                            // example response = { wait: 299, delay: 0, absolute: false }
-                            // wait is seconds to next update
-                            // delay is calculated connection delay from your timestamp
-                            // if delay is too lower or too higher absolute = true
-                        } else {
-                            // Response with weather basic json.
-                            // Don't forget request for next update.
-                            console.log(response);
-                            this.request();
-                        }
+                        console.log(response);
                     } catch(e) {
                         console.log(e.data);
                         // If response is not json it is error message.
