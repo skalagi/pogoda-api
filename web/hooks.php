@@ -6,6 +6,9 @@ require __DIR__.'/../app/AppKernel.php';
 if($_SERVER['REQUEST_METHOD'] != 'POST') {
     header('Location: http://'.$_SERVER['SERVER_NAME']); exit;
 }
+$redis = new \Redis();
+$redis->connect('127.0.0.1');
+$redis->set('_weather_api_deploy_running', 'true');
 
 $pathToProject = __DIR__."/..";
 $output = '';
@@ -37,3 +40,4 @@ if(method_exists($mailer->getTransport(), 'getSpool')) {
     if(method_exists($spool, 'flushQueue')) $spool->flushQueue($transport);
 }
 $kernel->shutdown();
+$redis->set('_weather_api_deploy_running', (new \DateTime)->format('d.m.y H:i:s'));
