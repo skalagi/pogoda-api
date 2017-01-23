@@ -308,7 +308,7 @@
                 setTimeout(timer, intervalSec*1000);
                 return;
             }
-            for(var i=0; i < socket.hosts.length; i++) {
+            for(var i in socket.hosts) {
                 var $newHost = document.createElement('li');
                 $newHost.className = 'list-group-item';
 

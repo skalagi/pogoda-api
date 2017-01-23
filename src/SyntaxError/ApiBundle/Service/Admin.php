@@ -83,18 +83,14 @@ class Admin
 
     public function createSocketInformer()
     {
-        $hostsObj = is_readable(Config::hostsPath) ? json_decode(file_get_contents(Config::hostsPath)) : new \stdClass();
-        $output = [];
-        foreach(get_object_vars($hostsObj) as $client) {
-            $output[] = $client;
-        }
+        $clients = is_readable(Config::hostsPath) ? json_decode(file_get_contents(Config::hostsPath), JSON_OBJECT_AS_ARRAY) : [];
 
         $configPid = Config::getPid();
         $managerPath = __DIR__.DIRECTORY_SEPARATOR."..".DIRECTORY_SEPARATOR."..".DIRECTORY_SEPARATOR."SocketBundle".DIRECTORY_SEPARATOR."manager";
         $logPath = str_replace(PHP_EOL, '', `$managerPath ws:status -l`);
 
         return [
-            'hosts' => $output,
+            'hosts' => $clients,
             'pid' => is_numeric($configPid) ? (int)$configPid : false,
             'log' => is_readable($logPath) ? explode(PHP_EOL, file_get_contents($logPath)) : false
         ];

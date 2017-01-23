@@ -6,26 +6,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use SyntaxError\ApiBundle\Tools\Jsoner;
 use SyntaxError\NotificationBundle\Kernel\Storage;
-use SyntaxError\SocketBundle\Server\Config;
 
 class AdminController extends Controller
 {
     public function loggedAction(Request $request)
     {
-        if( $request->query->has('ws_action') ) {
-            switch($request->query->get('ws_action')) {
-                case 'start':
-                    $serverPath = __DIR__ . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "SocketBundle" . DIRECTORY_SEPARATOR . "app.php";
-                    `php $serverPath > /dev/null 2>/dev/null &`;
-                    return $this->redirectToRoute( $request->attributes->get('_route') );
-                default:
-                    $pid = Config::getPid();
-                    `kill $pid`;
-                    file_put_contents(__DIR__. DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "SocketBundle" . DIRECTORY_SEPARATOR . ".pid", 'stopped');
-                    return $this->redirectToRoute( $request->attributes->get('_route') );
-            }
-        }
-
         $sendForm = -1;
         $subscribers = new Storage();
         if($request->request->has('mailing')) {
@@ -37,6 +22,7 @@ class AdminController extends Controller
                     ->setSubject($request->request->get('subject'))
                     ->setBody($request->request->get('mailing'), 'text/html', 'utf-8')
                     ->setDescription('Wiadomość wygenerowana przez stacje pogodową w Skałągach.');
+                /** @noinspection PhpParamsInspection */
                 $this->get('mailer')->send($welcomeEmail);
                 $sendForm++;
             }
