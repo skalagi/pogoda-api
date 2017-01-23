@@ -29,9 +29,11 @@ class AdminController extends Controller
         }
         $admin = $this->get('syntax_error_api.admin');
 
-        if( $request->isXmlHttpRequest() ) {
+        if($request->isXmlHttpRequest()) {
             $jsoner = new Jsoner();
-            $jsoner->createJson( $admin->createSocketInformer() );
+            $socketInfo = $admin->createSocketInformer();
+            unset($socketInfo['log']);
+            $jsoner->createJson($socketInfo);
             return $jsoner->createResponse(null);
         }
 
