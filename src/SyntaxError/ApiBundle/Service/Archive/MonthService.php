@@ -23,8 +23,8 @@ class MonthService implements ArchiveService
 
     public function highFormatter(\DateTime $dateTime, $archiveName)
     {
-        $from = (new \DateTime( $dateTime->format("Y-m-01 00:00:00") ));
-        $to = (new \DateTime( $dateTime->format("Y-m-t 23:59:59") ));
+        $to = clone $dateTime;
+        $from = $dateTime->modify('-1 month');
 
         $repository = $this->em->getRepository("SyntaxErrorApiBundle:ArchiveDay$archiveName");
         if($repository instanceof AbstractDayRepository) {

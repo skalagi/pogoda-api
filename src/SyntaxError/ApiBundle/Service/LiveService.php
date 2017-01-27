@@ -63,6 +63,7 @@ class LiveService
         $data->name = "Czas aktualizacji serwera";
         unset($data->units);
         $data->value = (new \DateTime())->setTimestamp($last)->format("Y-m-d H:i:s");
+        $data->units = null;
 
         $time = new Time($data);
         return $time->setNext($next);

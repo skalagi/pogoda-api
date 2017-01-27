@@ -23,8 +23,8 @@ class YearService implements ArchiveService
 
     public function highFormatter(\DateTime $dateTime, $archiveName)
     {
-        $from = (new \DateTime( $dateTime->format("Y-01-01 00:00:00") ));
-        $to = (new \DateTime( $dateTime->format("Y-12-31 23:59:59") ));
+        $to = clone $dateTime;
+        $from = $dateTime->modify('-1 year');
 
         $repository = $this->em->getRepository("SyntaxErrorApiBundle:ArchiveDay$archiveName");
         if($repository instanceof AbstractDayRepository) {
